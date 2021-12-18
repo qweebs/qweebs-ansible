@@ -75,6 +75,16 @@
         src: "files/prometheus/prometheus.yml"
         dest: "{{ workdir }}/.prometheus/prometheus.yml"
 
+    - name: Create the directory structure for promtail
+      file:
+        path: "{{ workdir }}/.promtail"
+        state: directory
+
+    - name: Copy the promtail config
+      template:
+        src: "files/promtail/promtail.yml"
+        dest: "{{ workdir }}/.promtail/promtail.yml"
+
     - name: Upgrade the containers and run `docker-compose up`
       community.general.docker_compose:
         project_src: "{{ workdir }}"
