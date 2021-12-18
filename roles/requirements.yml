@@ -1,0 +1,6 @@
+roles:
+  - src: geerlingguy.docker
+
+  - src: git@github.com:fourstepper/ansible-role-fail2ban.git
+    scm: git
+    version: master

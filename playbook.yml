@@ -1,0 +1,90 @@
+---
+- hosts: all
+
+  pre_tasks:
+    - name: Update cache if on Debian or Ubuntu
+      apt:
+        update_cache: yes
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Include credential vars
+      include_vars: defaults/credentials.yml
+
+    - name: Include general vars
+      include_vars: defaults/main.yml
+
+    - name: Manage authorized SSH keys
+      authorized_key:
+        exclusive: yes
+        user: root
+        key: "{{ item }}"
+      with_file: "{{ ansible_public_keys_path }}"
+
+  roles:
+    - name: Include docker role
+      role: geerlingguy.docker
+
+    - name: Include fail2ban role
+      role: ansible-role-fail2ban
+
+  tasks:
+    - name: Install python dependencies
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - python3
+        - python3-pip
+        - python3-setuptools
+
+    - name: Make sure docker python module is installed
+      pip:
+        name: "docker, docker-compose"
+
+    - name: Create the needed directory structure
+      file:
+        path: "{{ workdir }}"
+        state: directory
+        mode: 0600
+      changed_when: false
+
+    - name: Copy docker-compose
+      template:
+        src: files/docker-compose.yml
+        dest: "{{ workdir }}/docker-compose.yml"
+      register: deploy_file
+
+    - name: Prepare the directory structure for traefik config
+      file:
+        path: "{{ workdir }}/tools/traefik"
+        state: directory
+        recurse: true
+
+    - name: Copy the traefik config
+      template:
+        src: "files/traefik/config.yml"
+        dest: "{{ workdir }}/tools/traefik/config.yml"
+
+    - name: Create the directory structure for Prometheus
+      file:
+        path: "{{ workdir }}/.prometheus"
+        state: directory
+
+    - name: Copy the prometheus config
+      template:
+        src: "files/prometheus/prometheus.yml"
+        dest: "{{ workdir }}/.prometheus/prometheus.yml"
+
+    - name: Upgrade the containers and run `docker-compose up`
+      community.general.docker_compose:
+        project_src: "{{ workdir }}"
+        pull: true
+        remove_orphans: true
+      register: output
+      when: upgrade
+
+    - name: Run `docker-compose up`
+      community.general.docker_compose:
+        project_src: "{{ workdir }}"
+      register: output
+      when: deploy_file.changed and not upgrade
