@@ -82,6 +82,8 @@ services:
       - "traefik.http.routers.whoami.tls.certresolver=mytlschallenge"
     restart: always
     environment:
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WC_GZD_ENCRYPTION_KEY', '{{ qweebs_g2d_enc_key }}' );
       WORDPRESS_DB_HOST: qweebs_dot_com_db:3306
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: "{{ mysql_password_qweebs }}"
