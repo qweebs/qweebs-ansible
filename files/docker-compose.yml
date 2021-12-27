@@ -72,6 +72,8 @@ services:
     depends_on:
       - qweebs_dot_com_db
     image: wordpress:latest
+    build: 
+      context: ./.qweebs_dot_com
     container_name: "qweebs_dot_com_web"
     volumes:
       - ./.qweebs_dot_com/site_data:/var/www/html
