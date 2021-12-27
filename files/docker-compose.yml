@@ -77,6 +77,10 @@ services:
       - ./.qweebs_dot_com/site_data:/var/www/html
     labels:
       - "traefik.enable=true"
+      - "traefik.http.middlewares.securityheaders.headers.STSSeconds=31536000"
+      - "traefik.http.middlewares.securityheaders.headers.STSIncludeSubdomains=true"
+      - "traefik.http.middlewares.securityheaders.headers.STSPreload=true"
+      - "traefik.http.routers.whoami.middlewares=securityheaders@docker"
       - "traefik.http.routers.whoami.rule=Host(`qweebs.com`,`www.qweebs.com`)"
       - "traefik.http.routers.whoami.entrypoints=websecure"
       - "traefik.http.routers.whoami.tls.certresolver=mytlschallenge"
