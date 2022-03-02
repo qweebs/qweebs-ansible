@@ -97,7 +97,7 @@ services:
     logging: *logging
 
   qweebs_dot_com_db:
-    image: mariadb:10.7
+    image: mariadb:10.8
     volumes:
       - ./.qweebs_dot_com/db_data:/var/lib/mysql
     container_name: "qweebs_dot_com_db"
