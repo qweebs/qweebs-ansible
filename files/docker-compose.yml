@@ -61,7 +61,7 @@ services:
 
   promtail:
     container_name: promtail
-    image: grafana/promtail:2.4.1
+    image: grafana/promtail:2.4.2
     volumes:
       - /var/lib/docker/:/var/lib/docker:ro
       - ./.promtail/promtail.yml:/etc/promtail/promtail.yml:ro
