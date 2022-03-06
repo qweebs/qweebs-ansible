@@ -1,9 +1,9 @@
 version: "3.4"
 
-x-logging: 
+x-logging:
     &logging
     driver: "json-file"
-    options: 
+    options:
       tag: "{% raw %}{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}{% endraw %}"
 
 services:
@@ -71,8 +71,7 @@ services:
   qweebs_dot_com_web:
     depends_on:
       - qweebs_dot_com_db
-    image: wordpress:latest
-    build: 
+    build:
       context: ./.qweebs_dot_com
     container_name: "qweebs_dot_com_web"
     volumes:
