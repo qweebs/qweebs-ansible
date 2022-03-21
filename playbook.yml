@@ -52,6 +52,11 @@
         src: files/qweebs-dockerfile/Dockerfile
         dest: "{{ workdir }}/.qweebs_dot_com/Dockerfile"
 
+    - name: Copy Qweebs uploads.ini
+      copy:
+        src: files/qweebs-dockerfile/uploads.ini
+        dest: "{{ workdir }}/.qweebs_dot_com/uploads.ini"
+
     - name: Copy docker-compose
       template:
         src: files/docker-compose.yml
@@ -93,6 +98,7 @@
       community.general.docker_compose:
         project_src: "{{ workdir }}"
         pull: true
+        build: true
         remove_orphans: true
       register: output
       when: upgrade
